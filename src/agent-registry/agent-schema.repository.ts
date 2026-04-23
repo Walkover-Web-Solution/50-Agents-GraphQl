@@ -1,4 +1,4 @@
-import { Db } from "mongodb";
+import { Db, ObjectId } from "mongodb";
 import { AgentSchemaRecord, DataSource } from "../common/types";
 
 export class AgentSchemaRepository {
@@ -6,7 +6,7 @@ export class AgentSchemaRepository {
 
   public async getSchema(agentId: string): Promise<AgentSchemaRecord | null> {
     const doc = await this.registryDb.collection("microapps").findOne({
-      agent_id: agentId,
+      agent_id: new ObjectId(agentId),
       active_status: true,
       deleted_at: null,
     });
