@@ -36,11 +36,21 @@ interface BuildResolverInput {
 }
 
 function ensurePlainObject(value: unknown, fieldName: string): Record<string, unknown> {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
+  let parsedValue = value;
+  
+  if (typeof value === "string") {
+    try {
+      parsedValue = JSON.parse(value);
+    } catch (e) {
+      throw new ValidationError(`${fieldName} contains an invalid JSON string`);
+    }
+  }
+
+  if (!parsedValue || typeof parsedValue !== "object" || Array.isArray(parsedValue)) {
     throw new ValidationError(`${fieldName} must be a JSON object`);
   }
 
-  return value as Record<string, unknown>;
+  return parsedValue as Record<string, unknown>;
 }
 
 function validatePagination(limit?: number, offset?: number): { limit: number; offset: number } {
